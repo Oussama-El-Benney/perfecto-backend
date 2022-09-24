@@ -8,8 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 public interface AppUserRepository extends JpaRepository<AppUser,Long> {
   AppUser findByUsername(String username);
 
+
   @Query("select p from AppUser p where p.username = ?1")
    boolean findExistByname(String name);
 
   boolean existsAppUserByUsername(String username);
+
+
+
 }

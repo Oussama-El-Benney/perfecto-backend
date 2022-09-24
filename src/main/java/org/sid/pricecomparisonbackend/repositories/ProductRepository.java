@@ -12,7 +12,10 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
 //  List<Product> findByNameContains(String keyword);
 
-//  List<Product> findById(Long id);
+
+
+  @Query("select p from Product p where p.id = :id")
+  Product findProductById(@Param("id") Long id);
 
   List<Product> findByNameContains(String keyword);
 

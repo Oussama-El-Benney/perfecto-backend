@@ -3,6 +3,7 @@ package org.sid.pricecomparisonbackend.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.sid.pricecomparisonbackend.secrservice.entities.AppUser;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,9 +19,12 @@ public class Favorites {
   private Long id;
   private String name;
 
-  @OneToOne
-  private Client client;
-
-  @OneToMany(mappedBy = "favorites",fetch = FetchType.EAGER)
-  private List<Product> favoriteProducts=new ArrayList<>();
+//  @OneToOne
+//  private Client client;
+//
+//  @OneToOne(mappedBy = "favorites")
+//  private AppUser appUser;
+//
+//  @OneToMany(mappedBy = "favoriteList",fetch = FetchType.EAGER)
+//  private List<Product> favoriteProducts=new ArrayList<>();
 }

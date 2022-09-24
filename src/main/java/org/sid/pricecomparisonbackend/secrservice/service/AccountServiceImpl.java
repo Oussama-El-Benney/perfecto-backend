@@ -1,5 +1,6 @@
 package org.sid.pricecomparisonbackend.secrservice.service;
 
+import org.sid.pricecomparisonbackend.entities.Product;
 import org.sid.pricecomparisonbackend.secrservice.entities.AppUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,6 +54,11 @@ public class AccountServiceImpl implements AccountService {
     AppUser appUser = appUserRepository.findByUsername(username);
     AppRole appRole = appRoleRepository.findByRoleName(roleName);
     appUser.getAppRoles().add(appRole);
+  }
+
+  public void addProductToFavorite(Product product, AppUser appUser) {
+    appUser.getFavProd().add(product);
+
   }
 
   @Override

@@ -21,8 +21,9 @@ public class Product {
   private int rating;
   @Enumerated(EnumType.STRING)
   private CategoryNature categoryNature;
-  @ManyToOne
-  private Favorites favorites;
+
+//  @ManyToOne
+//  private Favorites favoriteList;
 //  @ManyToOne
 //  private Category category;
 }

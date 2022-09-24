@@ -49,7 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/login/",
                     "login",
                     "/refreshToken/**",
-                    "/products/**").permitAll()
+                    "/products/**",
+                    "/categories/**").permitAll()
 //    http.formLogin();
 //    http.authorizeRequests().antMatchers(HttpMethod.POST,"/users/**").hasAuthority("USER");
             .anyRequest()

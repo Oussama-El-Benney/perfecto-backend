@@ -3,6 +3,7 @@ package org.sid.pricecomparisonbackend.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sid.pricecomparisonbackend.dtos.CategoryDTO;
+import org.sid.pricecomparisonbackend.dtos.FavProductDTO;
 import org.sid.pricecomparisonbackend.dtos.MagasinProductDTO;
 import org.sid.pricecomparisonbackend.dtos.ProductDTO;
 import org.sid.pricecomparisonbackend.entities.*;
@@ -12,13 +13,15 @@ import org.sid.pricecomparisonbackend.exceptions.MagasinProductNotFoundException
 import org.sid.pricecomparisonbackend.mappers.CategoryMapperImpl;
 import org.sid.pricecomparisonbackend.mappers.MagasinProductMapperImpl;
 import org.sid.pricecomparisonbackend.mappers.ProductMapperImpl;
-import org.sid.pricecomparisonbackend.repositories.CategoryRepository;
-import org.sid.pricecomparisonbackend.repositories.MagasinProductRepository;
-import org.sid.pricecomparisonbackend.repositories.PersonRepository;
-import org.sid.pricecomparisonbackend.repositories.ProductRepository;
+import org.sid.pricecomparisonbackend.repositories.*;
+import org.sid.pricecomparisonbackend.secrservice.entities.AppUser;
+import org.sid.pricecomparisonbackend.secrservice.repo.AppUserRepository;
+import org.sid.pricecomparisonbackend.secrservice.service.AccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +37,10 @@ public class PriceComparisonServiceImpl implements PriceComparisonService {
   private CategoryRepository categoryRepository;
   private CategoryMapperImpl categoryMapper;
   private MagasinProductMapperImpl magasinProductMapper;
+  private FavoritesRepository favoritesRepository;
   private ProductMapperImpl productMapper;
+  private AccountService accountService;
+  private AppUserRepository appUserRepository;
 
   @Override
   public Person savePerson(Person person, PersonNature nature) {
@@ -125,12 +131,12 @@ public class PriceComparisonServiceImpl implements PriceComparisonService {
     return ProductDTOS;
   }
 
-  public List<ProductDTO> searchProductsById(Long id) {
+  public ProductDTO searchProductsById(Long id) {
 //        List<Product> products=productRepository.findByNameContains(keyword);
 
-    Optional<Product> products = productRepository.findById(id);
-//    List<MagasinProductDTO> MagasinProductDTOS = products.stream().map(prod -> magasinProductMapper.fromMagasinProduct(prod)).collect(Collectors.toList());
-    List<ProductDTO> ProductDTOS = products.stream().map(prod -> productMapper.fromProduct(prod)).collect(Collectors.toList());
+    Product products = productRepository.findProductById(id);
+//    List<ProductDTO> ProductDTOS = products.stream().map(prod -> productMapper.fromProduct(prod)).collect(Collectors.toList());
+    ProductDTO ProductDTOS = productMapper.fromProduct(products);
 
     return ProductDTOS;
 //    return null;
@@ -145,4 +151,37 @@ public class PriceComparisonServiceImpl implements PriceComparisonService {
 
     return CategoryProductsDTOS;
   }
+
+  @Override
+  public Collection<Product> getFavorites(Principal principal) {
+//    Favorites FavProductsss = favoritesRepository.findByUser(appUserRepository.findByUsername("sirat"));
+//    AppUser appUser= (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    String name = principal.getName();
+    AppUser appUser=  accountService.loadUserByUsername(principal.getName());
+    Collection<Product> favProd = appUser.getFavProd();
+//    Favorites FavProducts = favoritesRepository.findByUser(appUser);
+
+    return favProd;
+  }
+
+  @Override
+  public ProductDTO addProductToFavorites(FavProductDTO favProductDTO, Principal principal ) {
+    log.info("Adding new Product to Favorites");
+//    Product product = productMapper.fromProductDTO(productDTO);
+    Product product = productRepository.findProductById(favProductDTO.getId());
+    AppUser appUser=  accountService.loadUserByUsername(principal.getName());
+    appUser.getFavProd().add(product);
+    return productMapper.fromProduct(product);
+  }
+
+  @Override
+  public void deleteProductFromFavorites(Long productId, Principal principal) {
+    log.info("Deleting Product from Favorites");
+    Product product = productRepository.findProductById(productId);
+    AppUser appUser=  accountService.loadUserByUsername(principal.getName());
+    appUser.getFavProd().remove(product);
+  }
+
+
 }

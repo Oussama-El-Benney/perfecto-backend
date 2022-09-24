@@ -16,6 +16,6 @@ public class Client extends Person{
 
 
 //
-  @OneToOne(mappedBy = "client", fetch = FetchType.EAGER)
-  private Favorites favorites;
+//  @OneToOne(mappedBy = "client", fetch = FetchType.EAGER)
+//  private Favorites favorites;
 }
